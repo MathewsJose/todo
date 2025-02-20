@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # PHP Laravel Backend
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: todo-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./backend:/var/www
+    networks:
+      - todo-network
+
+  # Nginx for Laravel
+  webserver:
+    image: nginx:alpine
+    container_name: todo-webserver
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./backend:/var/www
+      - ./docker/nginx:/etc/nginx/conf.d
+    networks:
+      - todo-network
+
+  # MySQL Database
+  db:
+    image: mysql:5.7
+    container_name: todo-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: todo_db
+      MYSQL_ROOT_PASSWORD: secret
+    volumes:
+      - dbdata:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - todo-network
+
+  # Vue.js Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: todo-frontend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./frontend:/app
+    networks:
+      - todo-network
+
+volumes:
+  dbdata:
+    driver: local
+
+networks:
+  todo-network:
+    driver: bridge
