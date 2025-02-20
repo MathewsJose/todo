@@ -16,8 +16,6 @@ A simple and elegant To-Do List application built with **Laravel** (backend) a
 
 -   **Labels**: Categorize tasks using labels.
 
--   **Modern UI**: Built with **Tailwind CSS** for a clean and attractive design.
-
 * * * * *
 
 **Technologies Used**
